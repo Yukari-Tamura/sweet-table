@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, OnDestroy, Renderer2 } from '@angular/core';
+import { fromEvent, Subject, takeUntil} from 'rxjs';
 
 @Component({
   selector: 'ngx-sweet-tables',
@@ -9,48 +10,68 @@ export class SweetTablesComponent implements OnInit {
 
   @Input() listHeaders:any;
   @Input() data:any;
-  @ViewChild('table', {static: true}) table!:ElementRef;
-  constructor() { }
+  @ViewChild('table') table!:ElementRef;
 
-  ngOnInit(): void {
+  row!:HTMLTableRowElement;
+
+  private _unsubscribe: Subject<void>;
+
+  constructor( private _render2:Renderer2) { 
+    this._unsubscribe = new Subject<void>();
   }
 
-  ngAfterViewInit(){
-    this.moveRows();
+
+  ngOnInit(): void {
+    
+  }
+  
+
+  ngAfterViewInit(): void{
+    this.enableRowDragging();
+  }
+
+  ngOndestroy():void {
+    this._unsubscribe.next();
+    this._unsubscribe.complete();
+  }
+
+  enableRowDragging():void {
+    const table : HTMLTableElement = this.table.nativeElement;
+    const rows: HTMLCollectionOf<HTMLTableRowElement> = table.rows;
+
+    for(let i = 0; i < rows.length; i++){
+      this.row = rows[i] as any;
+
+      this._render2.setAttribute(this.row, 'draggable', 'true');
+      this._handleRowDragStart(this.row);
+      this._handleRowDragOver(this.row, rows);
+    }
   }
 
  
-  moveRows() {
-    const table : HTMLTableElement = this.table.nativeElement;
+  private _handleRowDragStart(rowElement: HTMLTableRowElement): void {
+    fromEvent(rowElement, 'dragstart').pipe(takeUntil(this._unsubscribe)).subscribe(event => {
+      this.row = event.target as HTMLTableRowElement;
+    })
+  }
 
-    const rows:HTMLCollectionOf<HTMLTableRowElement> = table.rows;
-    let i = 0;
-    //행의 길이를 반환합니다.
-    for(i = 0; i < rows.length; i++){
-      let row = rows[i] as any;
+  private _handleRowDragOver(rowElement: HTMLTableRowElement, rows: HTMLCollectionOf<HTMLTableRowElement>): void {
+    fromEvent(rowElement, 'dragover').pipe(takeUntil(this._unsubscribe)).subscribe(dragEvent => {
+      dragEvent.preventDefault();
 
-      row.setAttribute('draggable', true);
+      let allRows: HTMLTableRowElement[] = Array.from(rows);
+      const targetRow = (dragEvent.target as HTMLTableRowElement).closest('tr');
 
-      row.addEventListener('dragstart', (event:any) => {
-        row = event.target;
-      })
-
-      row.addEventListener('dragover', (event:any) => {
-        var e = event;
-         e.preventDefault();
-
-         let allRows = Array.from(rows);
-
-         if(allRows.indexOf(e.target.parentNode) > allRows.indexOf(row)){
-          e.target.parentNode.after(row);
-          
-         }else{
-          e.target.parentNode.before(row);
-          
-         }
-          
-      })
+      if(targetRow && targetRow !== this.row){
+        if(allRows.indexOf(targetRow) > allRows.indexOf(this.row)){
+          targetRow.after(this.row)
+        } else {
+          targetRow.before(this.row);
+        }
+      }
     }
+    
+  )
   }
 
 }
