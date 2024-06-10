@@ -1,0 +1,102 @@
+<div class="content-sweet-table">
+    <div class="row-sweet-table">
+        <div class="sweet-box-search">
+            <div class="form-group">
+                <div class="label">Buscador</div>
+                <div class="input-group">
+                    <div class="icon">
+                        <img src="assets/icons/list.svg" alt="">
+                    </div>
+                    <div class="box-input">
+                        <input type="text" class="buscador" placeholder="Buscar ...">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sweet-controls">
+            <div class="sweet-box-add">
+                <img src="assets/icons/plus.svg" alt="">
+            </div>
+            <div class="sweet-box-up">
+                <img src="assets/icons/up.svg" alt="">
+            </div>
+            <div class="sweet-box-down">
+                <img src="assets/icons/down.svg" alt="">
+            </div>
+            <div class="sweet-box-edit">
+                <img src="assets/icons/edit.svg" alt="">
+            </div>
+            <div class="sweet-box-filter">
+                <img src="assets/icons/filter.svg" alt="">
+            </div>
+            <div class="sweet-box-number">
+
+            </div>
+        </div>
+
+        <table #table>
+            <thead>
+                <th>N°</th>
+                <th *ngFor="let header of listHeaders"
+                [style.width]="header.width"
+                >
+                   
+                        {{header.header}}
+                   
+                </th>
+            </thead>
+            <tbody>
+                <tr
+                [draggable]="true"
+                *ngFor="let data of data; let i = index" [ngClass]="{'stripe': i % 2 == 0}">
+                    <td class="order">
+                        <div>
+                            {{i+1}}
+                        </div>
+                    </td>
+                    <td>{{data.ventas}}</td>
+                    <td>{{data.Detalle}}</td>
+                    <td>{{data.cantidad}}</td>
+                    <td>{{data.precioUnitario}}</td>
+                    <td>{{data.subtotal}}</td>
+                    <td>{{data.cadena}}</td>
+                    <td>{{data.recargo}}</td>
+                    <td>{{data.total}}</td>
+                    <td>{{data.tipoIva}}</td>
+                </tr>
+                <tr
+                [draggable]="true">
+                    <td class="order">
+                        <div>
+                        </div>
+                    </td>
+                    <td>{{data.ventas}}</td>
+                    <td>{{data.Detalle}}</td>
+                    <td>{{data.cantidad}}</td>
+                    <td>{{data.precioUnitario}}</td>
+                    <td>{{data.subtotal}}</td>
+                    <td>{{data.cadena}}</td>
+                    <td>{{data.recargo}}</td>
+                    <td>{{data.total}}</td>
+                    <td>{{data.tipoIva}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="sweet-box-footer">
+            <div class="sweet-content-footer">
+                <div class="sweet-box-prev">
+                    <img src="assets/icons/prev.svg" alt="">
+                </div>
+                <div class="sweet-box-center">
+                    <span>{{data.length}}</span>
+                </div>
+                <div class="sweet-box-next">
+                    <img src="assets/icons/next.svg" alt="">
+                </div>
+                
+            </div>
+            <span class="label">Total encontrados {{data.length}}</span>
+        </div>
+    </div>
+</div>

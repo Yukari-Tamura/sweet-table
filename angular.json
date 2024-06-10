@@ -15,7 +15,7 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "ngx-",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -28,10 +28,15 @@
             "inlineStyleLanguage": "sass",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "ngx-sweet-tables/assets/**",
+                "input" : "src",
+                "output": "/"
+              }
             ],
             "styles": [
-              "src/styles.sass"
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -102,6 +107,37 @@
               "src/styles.sass"
             ],
             "scripts": []
+          }
+        }
+      }
+    },
+    "ngx-sweet-tables": {
+      "projectType": "library",
+      "root": "projects/ngx-sweet-tables",
+      "sourceRoot": "projects/ngx-sweet-tables/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ngx-sweet-tables/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-sweet-tables/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-sweet-tables/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngx-sweet-tables/src/test.ts",
+            "tsConfig": "projects/ngx-sweet-tables/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-sweet-tables/karma.conf.js"
           }
         }
       }
